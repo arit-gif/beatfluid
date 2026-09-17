@@ -1,0 +1,20 @@
+:root {
+  --accent: #f3a6b2;
+  --accent-glow: rgba(243, 166, 178, 0.4);
+  --gold: #f4d06f;
+  --ink: #fcfbfa;
+  --ink-dim: #9c99a6;
+  --glass: rgba(18, 18, 28, 0.65);
+  --line: rgba(243, 166, 178, 0.22);
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: #000;
+}

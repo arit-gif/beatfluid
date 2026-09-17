@@ -1,0 +1,586 @@
+.panel {
+  background: var(--glass);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* The actual YouTube iframe lives here — invisible, but kept inside the
+   viewport (rather than pushed off-screen) so the embed doesn't get
+   lazy-load-deferred forever by never intersecting the viewport. */
+#yt-player-wrap {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 2px;
+  height: 2px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.music-player-card {
+  position: fixed;
+  z-index: 15;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 440px;
+  max-height: calc(100vh - 60px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.music-player-card::-webkit-scrollbar {
+  width: 6px;
+}
+
+.music-player-card::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 6px;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+}
+.drag-handle:active {
+  cursor: grabbing;
+}
+.drag-dots {
+  width: 36px;
+  height: 4px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.music-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px;
+}
+.music-close:hover {
+  color: var(--ink);
+}
+
+/* Minimize button sits left of the close button. */
+.music-min {
+  position: absolute;
+  top: 10px;
+  right: 36px;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 4px 6px;
+  line-height: 1;
+}
+.music-min:hover {
+  color: var(--ink);
+}
+
+/* Collapsed mini-bar: music keeps playing, UI shrinks to a pill. */
+.music-mini {
+  position: fixed;
+  z-index: 15;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 440px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: mini-pop 0.2s ease;
+}
+
+@keyframes mini-pop {
+  from {
+    transform: translateX(-50%) scale(0.96);
+    opacity: 0.4;
+  }
+  to {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+}
+
+.music-mini-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.music-mini-title {
+  font-size: 13px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.music-mini-progress {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.music-mini .btn {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.btn-mini-main {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  color: #12121c;
+  box-shadow: 0 4px 18px var(--accent-glow);
+}
+
+.btn-mini-main:hover {
+  transform: scale(1.08);
+  color: #000;
+}
+
+.playlist-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-right: 18px;
+  padding-top: 6px;
+}
+
+.playlist-tab-group {
+  display: flex;
+  align-items: stretch;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.playlist-tab-group.is-active {
+  border-color: transparent;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+}
+
+.playlist-tab {
+  border: none;
+  background: none;
+  padding: 5px 10px;
+  color: var(--ink-dim);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.playlist-tab:hover {
+  color: var(--ink);
+}
+.playlist-tab-group.is-active .playlist-tab {
+  color: #12121c;
+}
+
+.playlist-tab-remove {
+  border: none;
+  background: none;
+  padding: 0 8px 0 0;
+  color: var(--ink-dim);
+  opacity: 0.6;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s, color 0.2s;
+}
+.playlist-tab-remove:hover {
+  opacity: 1;
+  color: var(--ink);
+}
+.playlist-tab-group.is-active .playlist-tab-remove {
+  color: #12121c;
+}
+
+.playlist-tab-add {
+  border-radius: 20px;
+  border: 1px dashed var(--line);
+  background: none;
+  padding: 5px 12px;
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+.playlist-tab-add:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.playlist-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+.playlist-add-form input {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--ink);
+  font-size: 12px;
+  outline: none;
+}
+.playlist-add-form input::placeholder {
+  color: var(--ink-dim);
+}
+.playlist-add-form input:focus {
+  border-color: var(--accent);
+}
+.playlist-add-error {
+  margin: 0;
+  font-size: 11px;
+  color: #ff8a80;
+}
+.playlist-add-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.playlist-add-actions-right {
+  display: flex;
+  gap: 8px;
+}
+.playlist-add-reset {
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 10px;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+.playlist-add-reset:hover {
+  color: var(--ink);
+}
+.playlist-add-cancel,
+.playlist-add-confirm {
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid var(--line);
+}
+.playlist-add-cancel {
+  background: none;
+  color: var(--ink-dim);
+}
+.playlist-add-cancel:hover {
+  color: var(--ink);
+}
+.playlist-add-confirm {
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  color: #12121c;
+  border-color: transparent;
+  font-weight: 600;
+}
+
+.track-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-right: 18px;
+}
+.track-meta h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+}
+.track-meta p {
+  margin: 3px 0 0 0;
+  font-size: 13px;
+  color: var(--ink-dim);
+}
+.track-info-error .track-meta p {
+  color: #ff8a80;
+}
+.track-error-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--accent);
+}
+.badge {
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.progress-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.time {
+  font-size: 11px;
+  color: var(--ink-dim);
+  width: 34px;
+}
+.bar-bg {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent), var(--gold));
+  border-radius: 6px;
+  transition: width 0.1s linear;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 4px;
+}
+.btn {
+  background: none;
+  border: none;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, color 0.2s;
+}
+.btn:hover {
+  color: var(--accent);
+  transform: scale(1.1);
+}
+.btn-main {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  color: #12121c;
+  font-size: 20px;
+  box-shadow: 0 4px 18px var(--accent-glow);
+}
+.btn-main:hover {
+  transform: scale(1.08);
+  color: #000;
+}
+
+.vol-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vol-slider {
+  accent-color: var(--accent);
+  width: 70px;
+  height: 4px;
+  cursor: pointer;
+}
+
+@media (max-width: 480px) {
+  .music-player-card {
+    width: calc(100% - 24px);
+    padding: 16px;
+  }
+}
+
+/* ---- ✨ Fun extras ---- */
+
+.extras {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+
+.extras-toggle {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 0 0 0;
+}
+
+.extras-toggle:hover {
+  color: var(--accent);
+}
+
+/* Room guest follow-bar (replaces transport while following the DJ). */
+.follow-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+
+.follow-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Sleep timer popover */
+.sleep-pop {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 30;
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 12px;
+  background: rgba(18, 18, 28, 0.97);
+  border: 1px solid var(--line);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.sleep-pop button {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+  font-size: 12px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.sleep-pop button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* History list */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.history-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.history-title {
+  font-size: 12px;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.history-author {
+  font-size: 11px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Toast */
+.player-toast {
+  position: sticky;
+  bottom: 0;
+  text-align: center;
+  font-size: 12px;
+  color: #12121c;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accent), var(--gold));
+  border-radius: 10px;
+  padding: 8px 12px;
+  animation: toast-in 0.2s ease;
+}
+
+@keyframes toast-in {
+  from {
+    transform: translateY(6px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

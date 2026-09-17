@@ -1,0 +1,28 @@
+.offline-pack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+
+.offline-tracks {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.offline-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.btn-offline {
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+}

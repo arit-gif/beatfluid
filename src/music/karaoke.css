@@ -1,0 +1,237 @@
+.karaoke-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: karaoke-in 0.2s ease;
+}
+
+@keyframes karaoke-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.karaoke-card {
+  width: 100%;
+  max-width: 560px;
+  max-height: 72vh;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.karaoke-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.karaoke-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.karaoke-x {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--ink-dim);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.karaoke-x:hover {
+  color: var(--ink);
+}
+
+.karaoke-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.karaoke-sync {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+
+.karaoke-sync button {
+  min-width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ink);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0 6px;
+}
+
+.karaoke-sync button:hover,
+.karaoke-sync button.is-on {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.karaoke-offset {
+  min-width: 34px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.karaoke-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding: 6px 2px;
+  min-height: 120px;
+}
+
+.k-line {
+  border: none;
+  background: none;
+  text-align: center;
+  color: var(--ink-dim);
+  cursor: pointer;
+  padding: 7px 10px;
+  border-radius: 10px;
+  line-height: 1.45;
+  font-family: inherit;
+  transition: color 0.25s, background 0.25s, transform 0.25s;
+}
+
+.k-line:hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.k-line.is-past {
+  opacity: 0.45;
+}
+
+.k-line.is-active {
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent-glow), transparent);
+  box-shadow: 0 0 24px var(--accent-glow);
+  transform: scale(1.03);
+}
+
+.kfs-s .k-line,
+.kfs-s.karaoke-plain {
+  font-size: 13px;
+}
+
+.kfs-m .k-line,
+.kfs-m.karaoke-plain {
+  font-size: 16px;
+}
+
+.kfs-l .k-line,
+.kfs-l.karaoke-plain {
+  font-size: 20px;
+}
+
+.karaoke-plain {
+  white-space: pre-wrap;
+  color: var(--ink);
+  line-height: 1.7;
+  overflow-y: auto;
+  padding: 6px 4px;
+  text-align: center;
+}
+
+.karaoke-msg {
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink);
+  line-height: 1.7;
+  margin: 18px 0;
+}
+
+.karaoke-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: -2px;
+  animation: karaoke-spin 0.8s linear infinite;
+}
+
+@keyframes karaoke-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.karaoke-none {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.karaoke-none-btns {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.karaoke-paste {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+}
+
+.karaoke-paste textarea {
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--ink);
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  resize: vertical;
+  outline: none;
+}
+
+.karaoke-paste textarea:focus {
+  border-color: var(--accent);
+}
+
+.karaoke-credit {
+  text-align: center;
+}
